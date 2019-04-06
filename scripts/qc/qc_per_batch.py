@@ -82,18 +82,29 @@ tracking_snps = {}
 #
 
 raw_file_path = os.path.join(data_dir, file_base)
-basefile = os.path.basename(raw_file_path)
 
-tracking_individs['raw_data'] = get_num_lines(raw_file_path+".fam")
-tracking_snps['raw_data'] = get_num_lines(raw_file_path+".fam")
+tracking_indvids['raw_data'] = get_num_lines(raw_file_path+".fam")
+tracking_snps['raw_data'] = get_num_lines(raw_file_path+".bim")
 
+#
+#   EXCLUDE ON HIGH MISSING SAMPLE CALL RATE 
+#
 
+missing_out_file = "{}_missingness".format(raw_file_path)
+missing_cmd = ("plink --bfile {}"
+               " --mind 0.05"
+               " --make-bed"
+               " --out {}").format(raw_file_path, missing_out_file)
+
+missing_output = run_shell_cmd(missing_cmd)
+tracking_indvids['miss_samples'] = get_num_lines(missing_out_file+".fam")
+tracking_snps['miss_samples'] = get_num_lines(missing_out_file+".bim")
 
 
 #
 #   REMOVE DUPLICATE INDIVIDUALS 
 #
-
+fam_df = pd.read_csv(missing_out_file+".fam", sep="\s+")
 # 1) identify duplicates in .fam file 
 # 2) rename each duplicate with _1, _2, _3 etc. 
 
