@@ -29,7 +29,7 @@ parser.add_argument('output_dir', action='store')
   
 results = parser.parse_args()
  
-file_base = results.bfile
+plink_prefix = results.bfile
 data_dir = results.data_dir
 output_dir = results.output_dir
 
@@ -41,7 +41,7 @@ def get_num_lines(file):
 
     cmd = "wc -l {}".format(os.path.join(data_dir, file))
 
-    run_output = subprocess.run(cmd.split(), stdout=subprocess.PIPE)
+    run_output = subprocess.run(cmd.split(), stderr=subprocess.PIPE,  stdout=subprocess.PIPE)
     exit_status = run_output.returncode
     output = run_output.stdout.decode('utf-8')
     assert exit_status == 0, "wc -l command had {} exit status.\nOUTPUT:\n{}".format(exit_status, output)
@@ -49,7 +49,6 @@ def get_num_lines(file):
     num_lines = int(output.split()[0])
 
     return num_lines
-
 
 def run_shell_cmd(cmd):
     run_output = subprocess.run(cmd.split(), stdout=subprocess.PIPE)
@@ -60,18 +59,16 @@ def run_shell_cmd(cmd):
 
     return output
 
-
-
 # -----------
 # MAIN
 # -----------
 
-file_base = "MEGA_ex_Array_Batch13_Cox_17_preQC_GRID" # prefix before .bed/.bim/.ped
-data_dir = "/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/raw_preQC" 
-output_dir = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data"
+plink_prefix = "MEGA_ex_Array_Ancestry_MEGA_preQC_GRID" # prefix before .bed/.bim/.ped
+data_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data" 
+output_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
 
 print("Running qc_per_batch.py on {}...\
-        \n\tfile: {}\n\tdata_dir: {}\n\toutput_dir: {}".format(DATE, file_base, data_dir, output_dir))
+        \n\tfile: {}\n\tdata_dir: {}\n\toutput_dir: {}".format(DATE, plink_prefix, data_dir, output_dir))
 
 
 tracking_indvids = {}
@@ -81,72 +78,86 @@ tracking_snps = {}
 #   RAW DATA 
 #
 
-raw_file_path = os.path.join(data_dir, file_base)
+raw_file_path = os.path.join(data_dir, plink_prefix)
 
 tracking_indvids['raw_data'] = get_num_lines(raw_file_path+".fam")
 tracking_snps['raw_data'] = get_num_lines(raw_file_path+".bim")
 
-#
-#   EXCLUDE ON HIGH MISSING SAMPLE CALL RATE 
-#
-
-missing_out_file = "{}_missingness".format(raw_file_path)
-missing_cmd = ("plink --bfile {}"
-               " --mind 0.05"
-               " --make-bed"
-               " --out {}").format(raw_file_path, missing_out_file)
-
-missing_output = run_shell_cmd(missing_cmd)
-tracking_indvids['miss_samples'] = get_num_lines(missing_out_file+".fam")
-tracking_snps['miss_samples'] = get_num_lines(missing_out_file+".bim")
-
 
 #
 #   REMOVE DUPLICATE INDIVIDUALS 
-#
-fam_df = pd.read_csv(missing_out_file+".fam", sep="\s+")
-# 1) identify duplicates in .fam file 
-# 2) rename each duplicate with _1, _2, _3 etc. 
+#           - area for improvment: don't just randomly remove duplicate, see if there are diff in missing rate/sex errors...
+
+dup_samples_out_file = os.path.join(data_dir, 'dups_samples_{}.csv'.format(plink_prefix))
+fam_df = pd.read_csv(raw_file_path+".fam", sep="\s+", names=['FID','IID','c3','c4','c5','c6'])
 
 
+# create a copy of the original .fam file 
+fam_df.to_csv(raw_file_path+"_orignal.fam", sep=" ", header=None, index=None)
 
-df = pd.read_csv(raw_file_path+".fam", sep="\s+", columns=['FID','IID','col3','col4','col5','col6'])
+# check that FID and IID are equal 
+assert fam_df[~(fam_df.FID == fam_df.IID)].shape[0] == 0, "FID and IID are *not* equal in this file:\n{}".format(raw_file_path+".fam")
+
+# identify & write duplicated FID & IID rows
+dup_index = fam_df[fam_df.duplicated(subset=['FID','IID'], keep='first')].index
+dup_fids = fam_df.iloc[dup_index, :].FID.unique()
+
+# each duplicate, except for the first instance, will be append "_[counter]" to FID and IID 
+for this_fid in dup_fids: 
+    for counter, index_row in enumerate(fam_df.loc[fam_df['FID']== this_fid].iterrows()):
+        index, this_row = index_row
+        if counter == 0: 
+            continue 
+        else: 
+            fam_df.loc[index, ['FID', 'IID']] = fam_df.loc[index, ['FID', 'IID']].apply(lambda x: x+"_{}".format(counter))
+
+# write duplicated FID and IID to file 
+fam_df.loc[dup_index, ['FID','IID']].to_csv( dup_samples_out_file, sep=" ", header=None, index=None)
+
+# modify existing .fam to include dups
+fam_df.to_csv(raw_file_path+".fam", sep=" ", header=None, index=None)
+
+# remove duplciates
+rm_dups_out_file = os.path.join(output_dir, "{}_dedups".format(plink_prefix))
+rm_dups_cmd = "plink --bfile {} --remove {} --make-bed --out {}".format( raw_file_path, dup_samples_out_file, rm_dups_out_file)
+rm_dups_out = run_shell_cmd(rm_dups_cmd)
+
 
 #
 #   REMOVE INDIVIDUALS W/ DISCORDANT SEX
 #
 
-#   1. split PAR of X chromosome 
-split_x_out_file = "{}_splitX".format(os.path.join(output_dir, basefile))
+#   1. split PAR of X chromosome (must do this first and seperately before checking sex)
+split_x_out_file = "{}_splitX".format(raw_file_path)
 split_x_cmd = ("plink --bfile {}"
                    " --split-x b37 no-fail"
                    " --make-bed"
-                   " --out {}").format(raw_file_path, split_x_out_file)
+                   " --out {}").format(rm_dups_out_file, split_x_out_file)
 split_x_out = run_shell_cmd(split_x_cmd)
 
 #   2. check sex 
-chk_sex_out_file = "{}_check_sex".format(os.path.join(output_dir, basefile))
+chk_sex_out_file = "{}_check_sex".format(raw_file_path)
 chk_sex_cmd = ("plink --bfile {}"
                    " --check-sex"
                    " --out {}").format(split_x_out_file, chk_sex_out_file)
 chk_sex_out = run_shell_cmd(chk_sex_cmd)
 
 #   3. identify individual to remove 
-fig_file = os.path.join(output_dir, '{}_chrX_F_measure.png'.format(basefile))
-ids_to_remove_file = os.path.join(output_dir,  '{}_ids_to_remove.txt'.format(basefile))
+fig_file = os.path.join(output_dir, '{}_chrX_F_measure.png'.format(plink_prefix))
+ids_to_remove_file = os.path.join(output_dir,  '{}_ids_to_remove.txt'.format(plink_prefix))
 discordant_sex_cmd = ("python remove_discordant_sex.py"
                    " {}"
                    " {}"
                    " {}"
-                   " {}").format(chk_sex_out_file+".sexcheck", basefile, fig_file, ids_to_remove_file) 
+                   " {}").format(chk_sex_out_file+".sexcheck", plink_prefix, fig_file, ids_to_remove_file) 
 discordant_out = run_shell_cmd(discordant_sex_cmd)
 
-#   4. remove individuals with discordant IDs 
-rm_discord_sex_out_file = "{}_concdordant_sex".format(os.path.join(output_dir, basefile))
-rm_discord_sex_cmd = "plink --bfile {} --remove {} --make-bed --out {}".format( raw_file_path, ids_to_remove_file, rm_discord_sex_out_file)
+#   4. remove individuals with discordant IDs  & set het. haploid and non-missing haploids as missing
+rm_discord_sex_out_file = os.path.join(output_dir, "{}_concdordant_sex".format(plink_prefix))
+rm_discord_sex_cmd = "plink --bfile {} --remove {} --set-hh-missing --make-bed --out {}".format( split_x_out_file, ids_to_remove_file, rm_discord_sex_out_file)
 rm_discordant_out = run_shell_cmd(rm_discord_sex_cmd)
 
-tracking_individs['concord_sex'] = get_num_lines(rm_discord_sex_out_file+".fam")
+tracking_indvids['concord_sex'] = get_num_lines(rm_discord_sex_out_file+".fam")
 tracking_snps['concord_sex'] = get_num_lines(rm_discord_sex_out_file+".fam")
 
 
@@ -154,38 +165,39 @@ tracking_snps['concord_sex'] = get_num_lines(rm_discord_sex_out_file+".fam")
 #   EXCLUDE ON HIGH MISSING GENOTYPE AND SAMPLE CALL RATE 
 #
 
-filter1_out_file = "{}_temp1".format(os.path.join(output_dir, basefile))
+missing_samples_file = "{}_sample_missing".format(os.path.join(output_dir, plink_prefix))
 filter1_cmd = ("plink --bfile {}"
-               " --geno 0.05"
                " --mind 0.05"
                " --make-bed"
-               " --out {}").format(raw_file_path, filter1_out_file)
+               " --out {}").format(rm_discord_sex_out_file, missing_samples_file)
 
 filter1_output = run_shell_cmd(filter1_cmd)
 
 # get number of individuals and variants
-num_individ_filter1 = get_num_lines(filter1_out_file+".fam")
-num_variants_filter1 = get_num_lines(filter1_out_file+".bim")
+tracking_indvids['sample_missing'] = get_num_lines(missing_samples_file+".fam")
+tracking_snps['sample_missing'] = get_num_lines(missing_samples_file+".fam")
 
 #
 #  REMOVE INDIVIDUALS W/ HIGH HETEROZYGOSITY RATE 
 #
+#   individuals with outlier heterozygosity on the autosome may relfect contamination or poor DNA quality 
+#   note: expected heterozygosity will vary between populations
 
 # 1) identify indepdnent snps
-ind_snp_out_file = "{}_indepSNP".format(os.path.join(output_dir, basefile))
+ind_snp_out_file = "{}_indepSNP".format(os.path.join(output_dir, plink_prefix))
 ind_snp_cmd = ("plink --bfile {}"
                " --autosome"
                " --indep-pairwise 50 5 0.2"
-               " --out {}").format(filter1_out_file, ind_snp_out_file)
+               " --out {}").format(missing_samples_file, ind_snp_out_file)
 
 ind_snp_output = run_shell_cmd(ind_snp_cmd)
 
 # 2) calcualte heterozygosity using independent snps 
-het_out_file = "{}_het".format(os.path.join(output_dir, basefile))
+het_out_file = "{}_het".format(os.path.join(output_dir, plink_prefix))
 het_cmd = ("plink --bfile {}"
            " --extract {}"
            " --het"
-           " --out {}").format(filter1_out_file, ind_snp_out_file+".prune.in", het_out_file)
+           " --out {}").format(missing_samples_file, ind_snp_out_file+".prune.in", het_out_file)
 
 het_cmd_output = run_shell_cmd(het_cmd)
 
@@ -197,22 +209,17 @@ het_individ_cmd = ("python calc_het_outliers.py"
 het_individ_output = run_shell_cmd(het_individ_cmd)
 
 # 4) remove individuals based on heterozygosity
-het_removed_out_file = "{}_temp2".format(os.path.join(output_dir, basefile))
+het_removed_out_file = "{}_clean_het_rate".format(os.path.join(output_dir, plink_prefix))
 rm_het_cmd = ("plink --bfile {}"
               " --remove {}"
               " --make-bed"
-              " --out {}").format(filter1_out_file, het_out_file+".het_exclude.tsv", het_removed_out_file)
+              " --out {}").format(missing_samples_file, het_out_file+".het_exclude.tsv", het_removed_out_file)
 
 rm_het_output = run_shell_cmd(rm_het_cmd)
 
 # get number of individuals and variants
-num_individ_after_het = get_num_lines(het_removed_out_file+".fam")
-num_variants_after_het = get_num_lines(het_removed_out_file+".bim")
-
-#
-#   REMOVE DUPLICATE INDIVIDUALS
-#
-
+tracking_indvids['heterozygosity'] = get_num_lines(het_removed_out_file+".fam")
+tracking_snps['heterozygosity'] = get_num_lines(het_removed_out_file+".fam")
 
 
 #
@@ -220,7 +227,7 @@ num_variants_after_het = get_num_lines(het_removed_out_file+".bim")
 #
 
 # 1) calculate relatedness
-related_genome_out_file = "{}_genome".format(os.path.join(output_dir, basefile))
+related_genome_out_file = "{}_genome".format(os.path.join(output_dir, plink_prefix))
 related_cmd = ("plink --bfile {}"
                " --extract {}"
                " --genome --min 0.2"
@@ -229,7 +236,7 @@ related_cmd = ("plink --bfile {}"
 related_output = run_shell_cmd(related_cmd)
 
 # 2) identify related individuals to remove
-relatives_out_file = "{}_related_fid_exclude.tsv".format(os.path.join(output_dir, basefile))
+relatives_out_file = "{}_related_fid_exclude.tsv".format(os.path.join(output_dir, plink_prefix))
 relatives_cmd = ("python remove_related_individuals.py"
                  " {}"
                  " {}").format(related_genome_out_file+".genome", relatives_out_file)
@@ -237,7 +244,7 @@ relatives_cmd = ("python remove_related_individuals.py"
 relatives_output = run_shell_cmd(relatives_cmd)
 
 # 3) remove related individuals
-rm_relatives_out_file = "{}_clean".format(os.path.join(output_dir, basefile))
+rm_relatives_out_file = "{}_clean".format(os.path.join(output_dir, plink_prefix))
 rm_relatives_cmd = ("plink --bfile {}"
                     " --remove {}"
                     " --make-bed"
@@ -246,8 +253,9 @@ rm_relatives_cmd = ("plink --bfile {}"
 rm_relatives_output = run_shell_cmd(rm_relatives_cmd)
 
 # 4) get number of individuals and variants
-num_individ_after_relatives = get_num_lines(rm_relatives_out_file+".fam")
-num_variants_after_relatives = get_num_lines(rm_relatives_out_file+".bim")
+
+tracking_indvids['heterozygosity'] = get_num_lines(rm_relatives_out_file+".fam")
+tracking_snps['heterozygosity'] = get_num_lines(rm_relatives_out_file+".fam")
 
 #
 # SUMMARIZE
@@ -304,4 +312,4 @@ for raw_file_path in glob.glob(os.path.join(output_dir, "*_summary.tsv")):
 [os.remove(x) for x in glob.glob(rm_relatives_out_file+".nosex") ] 
 
 
-print("Done processing {}. Took {} minutes.".format(file_base, (time.time()-start)/60))
+print("Done processing {}. Took {} minutes.".format(plink_prefix, (time.time()-start)/60))
