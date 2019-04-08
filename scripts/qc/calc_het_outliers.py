@@ -4,6 +4,9 @@
 #               * calcualtes obserevd heterozygosity rate for each individuals
 #               * outputs individuals who are > 3 S.D. away (to be removed)
 #
+# 
+#           WARNING: if there are no idnividuals with outlier heterozygosity values, output file is not written
+# 
 #
 # Abin Abraham
 # created on: 2018-10-04 11:44:01
@@ -43,5 +46,9 @@ print("Number of individuals with het rate > 3 S.D from mean: {}".format(removed
 
 
 ## output tsv with two columsn FID and IID 
-removed_df.to_csv(output_file_path, sep="\t", index=False, header=False, columns = ['FID','IID'])
+if (removed_df.shape[0] > 0):
+    removed_df.to_csv(output_file_path, sep="\t", index=False, header=False, columns = ['FID','IID'])
+else: 
+    print("No individuals with outlier heterozygosity values...")
+
 print("Done! Check: {}".format(output_file_path))

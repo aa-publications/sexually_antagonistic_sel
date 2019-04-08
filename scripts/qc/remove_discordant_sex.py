@@ -2,6 +2,9 @@
 # This script will parse *.check_sex plink output and return 1) distribution plot of F-estimate and 2) individuals w/ discordant sex to remove. 
 #   - output are written to hte same directory as input file 
 #
+# 
+#   WARNING: if no discordant IDs are found, no grids_to_remove_file is written
+# 
 #
 # Abin Abraham
 # created on: 2019-04-05 11:02:56
@@ -68,5 +71,9 @@ print("chrX_Fcoef distribution saved to:\n\t{}".format(fig_out_file))
 
 # calc individuals to remove 
 dedup_df = failed_df[~failed_df.duplicated(subset=['FID','IID'], keep='first')]
-dedup_df.loc[:, ['FID','IID']].to_csv(grids_to_remove_file, index=False, sep="\t", header=False)
-print("Discordant IDs written to:\n\t{}".format(grids_to_remove_file))
+
+if (dedup_df.shape[0] > 0):
+    dedup_df.loc[:, ['FID','IID']].to_csv(grids_to_remove_file, index=False, sep="\t", header=False)
+    print("Discordant IDs written to:\n\t{}".format(grids_to_remove_file))
+else: 
+    print("No discordant sex IDs to write...")

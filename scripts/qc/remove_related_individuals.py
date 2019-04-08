@@ -5,6 +5,10 @@
 #          * output: 2 column tab seperated file with IID and FID to remove
 #
 #
+#          * WARNING: If no related individuals to remove, output file is not written! 
+# 
+# 
+# 
 # Abin Abraham
 # created on: 2018-10-04 14:19:39
 
@@ -35,7 +39,6 @@ df = pd.read_csv(genome_file, sep="\s+", usecols=[0,2])
 # a running list of FIDs removed
 fid_removed = set()
 
-
 for _, row in df.iterrows():
 
     fid1, fid2 = row[0], row[1]
@@ -47,7 +50,11 @@ for _, row in df.iterrows():
         fid_removed.add(fid2)
 
 final_df = pd.DataFrame( {'FID': list(fid_removed),'IID':list(fid_removed)})
-final_df.to_csv(output_file, sep="\t", index=False, header=False)
+
+if (final_df.shape[0] > 0):
+        final_df.to_csv(output_file, sep="\t", index=False, header=False)
+else: 
+        print("No highly realted individuals to remove...")
 
 print("Total FIDs removed {}".format(len(fid_removed)))
 print("Done. Removed one FID for related FID pairs. Check:\n{}".format(output_file))
