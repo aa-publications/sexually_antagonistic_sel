@@ -77,8 +77,9 @@ def safe_mkdir(path):
 
 # make a folder to hold all the analysis & outputs
 os.mkdir(os.path.join(output_dir, plink_prefix+"_qc"))
+output_dir = os.path.join(output_dir, plink_prefix+"_qc")
 
-
+# =============  SET UP =============
 print("Running qc_per_batch.py on {}...\
         \n\tfile: {}\n\tdata_dir: {}\n\toutput_dir: {}\n\n".format(DATE, plink_prefix, data_dir, output_dir))
 
@@ -88,10 +89,8 @@ base_prefix = plink_prefix
 TRACK_INDVID_DICT = OrderedDict()
 TRACK_SNP_DICT = OrderedDict()
 
-#
-#   CREATE A COPY & CALC BASIC STATS
-#
 
+# =============  CREATE A COPY AND CALC BASIC STATS =============
 (frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix)
 update_counts('raw_data', fam_ct, bim_ct)
 
@@ -140,12 +139,10 @@ update_counts('rm_dup_snps', fam_ct, bim_ct)
     no_dups_vars_plink_prefix, output_dir, base_prefix)
 update_counts('rm_test_miss_snps', fam_ct, bim_ct)
 
-#
-#   CALC FINAL STATISTICS
-#
-(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix)
-update_counts('raw_data', fam_ct, bim_ct)
 
+# =============  CALC FINAL STATS =============
+(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix, prefix='temp_final_stats')
+update_counts('raw_data', fam_ct, bim_ct)
 
 #
 #   CONVERT COUNTS TO DF
