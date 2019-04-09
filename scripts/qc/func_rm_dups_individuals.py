@@ -50,8 +50,8 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix):
     # =============  OUTPUT FILES =============
 
     copy_of_orig_fam_file = os.path.join(output_dir, "original_"+base_prefix+".fam")
-    duplicated_samples_file = os.path.join(output_dir, 'tmp_dups_samples_to_rm{}.csv'.format(base_prefix))
-    no_dups_plink_prefix = os.path.join(output_dir, "tmp_dedups_{}".format(base_prefix))
+    duplicated_samples_file = os.path.join(output_dir, 'temp_dups_samples_to_rm{}.csv'.format(base_prefix))
+    no_dups_plink_prefix = os.path.join(output_dir, "temp_dedups_{}".format(base_prefix))
 
 
     # =============  REMOVE DUPLICATE SAMPLES =============

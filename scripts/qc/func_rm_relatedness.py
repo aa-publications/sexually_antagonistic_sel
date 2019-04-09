@@ -55,7 +55,7 @@ def rm_relatedness(input_prefix, output_dir, ind_snp_output_file, base_prefix):
 
     # =============  OUTPUT FILES =============
     related_genome_output = os.path.join(output_dir, "inter_genome_{}".format(base_prefix))
-    ids_to_remove_relatedness = os.path.join(output_dir, "inter_ids_to_remove_relatedness_{}".format(base_prefix))
+    ids_to_remove_relatedness = os.path.join(output_dir, "inter_ids_to_remove_relatedness_{}.txt".format(base_prefix))
     related_indiv_removed_plink_prefix = os.path.join(output_dir, "temp_no_relatedness_{}".format(base_prefix))
 
     # ============= REMOVE HIGHLY RELATED INDIVIDUALS =============

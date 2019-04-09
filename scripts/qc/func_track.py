@@ -30,13 +30,13 @@ def track_fx(func):
 
     @functools.wraps(func)
     def count_and_time(*args, **kwargs): 
-        print("\n>> Running {} ...\n".format(func.__name__))
-        
+        print("\n<< Running {} ...\n".format(func.__name__))
+
         ts = time.time()
         fx_outputs = func(*args, **kwargs)
         te = time.time()
         
-        print("\n >>Done. Took {:.2} minutes.".format((te-ts)/60))
+        print("\nDone. Took {:.2} minutes. >>".format((te-ts)/60))
 
         # ASSUMES THAT THE FIRST RETURN ITEM IS THE PLINK PREFIX PATH 
 

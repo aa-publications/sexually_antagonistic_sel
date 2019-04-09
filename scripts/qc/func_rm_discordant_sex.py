@@ -50,11 +50,11 @@ def rm_discordant_sex(input_prefix, output_dir, base_prefix):
     full_path, pprefix = os.path.split(input_prefix)
 
     # =============  OUTPUT FILES =============
-    split_x_pprefix = os.path.join(output_dir, "tmp_split_X_{}".format(base_prefix))
+    split_x_pprefix = os.path.join(output_dir, "temp_split_X_{}".format(base_prefix))
     chk_sex_out_file = os.path.join(output_dir, "inter_check_sex_{}".format(base_prefix))
     chrx_Fmeasure_fig_file = os.path.join(output_dir, 'chrX_F_measure_{}.png'.format(base_prefix))
     ids_to_remove_file = os.path.join(output_dir,  'inter_ids_to_remove_discord_sex_{}.txt'.format(base_prefix))
-    cleaned_sex_plink_prefix = os.path.join(output_dir, "tmp_concdordant_sex_{}".format(base_prefix))
+    cleaned_sex_plink_prefix = os.path.join(output_dir, "temp_concdordant_sex_{}".format(base_prefix))
 
     # ============= REMOVE DISCORDANT SEX =============
 

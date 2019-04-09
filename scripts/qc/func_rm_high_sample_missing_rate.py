@@ -42,7 +42,7 @@ def rm_high_sample_missing_rate(input_prefix, output_dir, base_prefix):
     full_path, pprefix = os.path.split(input_prefix)
 
     # =============  OUTPUT FILES =============
-    ind_miss_removed_plink_prefix = os.path.join(output_dir, "tmp_sample_missing_{}".format(base_prefix))
+    ind_miss_removed_plink_prefix = os.path.join(output_dir, "temp_sample_missing_{}".format(base_prefix))
     
 
     # ============= REMOVE SAMPLES WITH HIGH MISSING RATE =============
