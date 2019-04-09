@@ -13,7 +13,9 @@ import sys
 import subprocess
 import pandas as pd
 
-sys.path.append('/Users/abin-personal/Documents/katja_biobank/katja_biobank/scripts/qc')
+# sys.path.append('/Users/abin-personal/Documents/katja_biobank/katja_biobank/scripts/qc')
+sys.path.append('/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/scripts/qc')
+
 from func_track import track_fx
 from func_run_shell_cmd import run_shell_cmd
 

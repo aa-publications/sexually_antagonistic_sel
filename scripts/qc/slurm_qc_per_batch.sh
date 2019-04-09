@@ -1,9 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --mem=12G
-#SBATCH --time=02:00:00
+#SBATCH --ntasks=8
+ #SBATCH --mem=12G
+#SBATCH --time=01:00:00
 #SBATCH --job-name=qc
-#SBATCH --array=1
+#SBATCH --array=1-13
 #SBATCH --output=qc_%A_%a.out
 #SBATCH --mail-user=abraham.abin13@gmail.com
 #SBATCH --mail-type=FAIL,END

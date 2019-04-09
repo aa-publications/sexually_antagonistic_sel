@@ -19,7 +19,9 @@ import time
 from datetime import datetime
 from collections import OrderedDict
 
-sys.path.append('/Users/abin-personal/Documents/katja_biobank/katja_biobank/scripts/qc')
+# sys.path.append('/Users/abin-personal/Documents/katja_biobank/katja_biobank/scripts/qc')
+sys.path.append('/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/scripts/qc')
+
 from func_calc_stats import calc_stats
 from func_run_shell_cmd import run_shell_cmd
 from func_rm_dups_individuals import rm_dup_individuals
