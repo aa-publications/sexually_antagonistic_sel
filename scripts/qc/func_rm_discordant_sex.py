@@ -73,7 +73,7 @@ def rm_discordant_sex(input_prefix, output_dir, base_prefix):
 
     #   3. identify individuals to remove 
     #       - if there are no individuals to remove, then no ids_to_remove_file is created...
-    discordant_sex_cmd = ("python remove_discordant_sex.py"
+    discordant_sex_cmd = ("python helper_remove_discordant_sex.py"
                     " {} {} {} {}").format(chk_sex_out_file+".sexcheck",
                                            pprefix, 
                                            chrx_Fmeasure_fig_file, 

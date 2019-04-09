@@ -70,7 +70,7 @@ def rm_relatedness(input_prefix, output_dir, ind_snp_output_file, base_prefix):
     related_stdout = run_shell_cmd(related_cmd)
 
     # 2) identify related individuals to remove
-    relatives_cmd = ("python remove_related_individuals.py"
+    relatives_cmd = ("python helper_remove_related_individuals.py"
                     " {}"
                     " {}").format(related_genome_output+".genome", ids_to_remove_relatedness)
 

@@ -71,7 +71,7 @@ def rm_high_het_rate(input_prefix, output_dir, base_prefix):
     het_stdout = run_shell_cmd(het_cmd)
 
     # 3) identify smaples to remove based on hetrozygozity
-    het_individ_cmd = ("python calc_het_outliers.py"
+    het_individ_cmd = ("python helper_calc_het_outliers.py"
                     " {} {}").format(het_out_file+".het", ids_to_remove_by_het_file)
 
     het_ids_stdout = run_shell_cmd(het_individ_cmd)
