@@ -17,9 +17,10 @@ import glob
 import argparse
 import time
 from datetime import datetime
-from collections import OrderedDict 
+from collections import OrderedDict
 
 sys.path.append('/Users/abin-personal/Documents/katja_biobank/katja_biobank/scripts/qc')
+from func_calc_stats import calc_stats
 from func_run_shell_cmd import run_shell_cmd
 from func_rm_dups_individuals import rm_dup_individuals
 from func_rm_discordant_sex import rm_discordant_sex
@@ -35,22 +36,20 @@ from func_track import get_num_lines
 DATE = datetime.now().strftime('%Y-%m-%d')
 start = time.time()
 
-# # retrieve command line args
-# parser = argparse.ArgumentParser(description='Example with nonoptional arguments')
-# parser.add_argument('bfile', action='store', type=str, help="plink bfile prefix")
-# parser.add_argument('data_dir', action='store', type=str, help="dir to plink input files")
-# parser.add_argument('output_dir', action='store')
+# retrieve command line args
+parser = argparse.ArgumentParser(description='Example with nonoptional arguments')
+parser.add_argument('bfile', action='store', type=str, help="plink bfile prefix")
+parser.add_argument('data_dir', action='store', type=str, help="dir to plink input files")
+parser.add_argument('output_dir', action='store')
+results = parser.parse_args()
 
-# results = parser.parse_args()
-
-# plink_prefix = results.bfile
-# data_dir = results.data_dir
-# output_dir = results.output_dir
+plink_prefix = results.bfile
+data_dir = results.data_dir
+output_dir = results.output_dir
 
 # -----------
 # FUNCTIONS
 # -----------
-
 
 def update_counts(label, fam_ct, bim_ct):
 
@@ -61,16 +60,24 @@ def update_counts(label, fam_ct, bim_ct):
 def safe_mkdir(path):
     try:
         os.mkdir(path)
-    except FileExistsError: 
+    except FileExistsError:
         pass
+
+
 # -----------
 # MAIN
 # -----------
 
+#### !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
+#               ONLY FOR DEV/TESTING SCRIPTS... 
+# plink_prefix = "MEGA_ex_Array_Ancestry_MEGA_preQC_GRID"  # prefix before .bed/.bim/.ped
+# data_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
+# output_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
+#### !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
 
-plink_prefix = "MEGA_ex_Array_Ancestry_MEGA_preQC_GRID"  # prefix before .bed/.bim/.ped
-data_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
-output_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
+# make a folder to hold all the analysis & outputs
+os.mkdir(os.path.join(output_dir, plink_prefix+"_qc"))
+
 
 print("Running qc_per_batch.py on {}...\
         \n\tfile: {}\n\tdata_dir: {}\n\toutput_dir: {}\n\n".format(DATE, plink_prefix, data_dir, output_dir))
@@ -80,8 +87,13 @@ base_prefix = plink_prefix
 
 TRACK_INDVID_DICT = OrderedDict()
 TRACK_SNP_DICT = OrderedDict()
-TRACK_INDVID_DICT['raw_data'] = get_num_lines(raw_plink_prefix+".fam")
-TRACK_SNP_DICT['raw_data'] = get_num_lines(raw_plink_prefix+".bim")
+
+#
+#   CREATE A COPY & CALC BASIC STATS
+#
+
+(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix)
+update_counts('raw_data', fam_ct, bim_ct)
 
 #
 #  QC ON SAMPLES
@@ -128,6 +140,12 @@ update_counts('rm_dup_snps', fam_ct, bim_ct)
     no_dups_vars_plink_prefix, output_dir, base_prefix)
 update_counts('rm_test_miss_snps', fam_ct, bim_ct)
 
+#
+#   CALC FINAL STATISTICS
+#
+(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix)
+update_counts('raw_data', fam_ct, bim_ct)
+
 
 #
 #   CONVERT COUNTS TO DF
@@ -141,8 +159,8 @@ snp_ct_df = pd.DataFrame(TRACK_SNP_DICT, index=[base_prefix])
 #
 
 log_files_path = os.path.join(output_dir, 'log')
-intermediate_files_path = os.path.join(output_dir,'intermediate' )
-temp_files_path = os.path.join(output_dir,'temp')
+intermediate_files_path = os.path.join(output_dir, 'intermediate')
+temp_files_path = os.path.join(output_dir, 'temp')
 
 safe_mkdir(log_files_path)
 safe_mkdir(intermediate_files_path)
