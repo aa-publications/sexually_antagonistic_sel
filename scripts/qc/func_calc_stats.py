@@ -19,7 +19,7 @@ from func_run_shell_cmd import run_shell_cmd
 
 
 @track_fx
-def calc_stats(input_prefix, output_dir, base_prefix, prefix='temp_frq_and_miss'):
+def calc_stats(input_prefix, output_dir, base_prefix, prefix='inter_frq_and_miss'):
     """
     Uses plink to calc frequency and missingness and outputs new plink bfiles. 
         - See OUTPUT FILES for all outputs files created
