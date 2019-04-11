@@ -100,7 +100,7 @@ batches = ["MEGA_ex_Array_Batch10_Cox_14_GenderDysphoria9_preQC_GRID",
            "MEGA_ex_Array_Batch8_Cox_13_02_preQC_GRID",
            "MEGA_ex_Array_Batch9_Cox_04_10_preQC_GRID"]
 
-frqx_file_path = "{}_qc/temp/temp_final_stats_{}.frqx"
+frqx_file_path = "{}_qc/final_qc_{}.frqx"
 FRQ_FILE = frqx_file_path.format(TARGET_BATCH, TARGET_BATCH)
 batches.remove(TARGET_BATCH)
 
