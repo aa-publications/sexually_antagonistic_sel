@@ -31,7 +31,7 @@ start = time.time()
 #          USER MODIFY THESE FILES 
 # ******************************************
 study_prefix_file = "/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/raw_preQC/cox_bfile_prefix.txt"
-data_dir="/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/raw_preQC"
+data_dir="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/post_qc_per_batch"
 output_snps_file="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/post_qc_shared_snps.txt"
 
 
@@ -47,7 +47,7 @@ snp_set = set()
 for index, study in enumerate(study_prefix_list):
     
     print("Getting snps from {}".format(study))
-    df = pd.read_csv(os.path.join(data_dir, study+".bim"), sep="\s+", usecols=[1], names=['rsID'])
+    df = pd.read_csv(os.path.join(data_dir,study+"_qc", "final_qc_"+study+".bim"), sep="\s+", usecols=[1], names=['rsID'])
     
     if index == 0: 
         snp_set.update(df.rsID.values)

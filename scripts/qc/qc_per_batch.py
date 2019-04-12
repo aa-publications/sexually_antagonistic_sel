@@ -34,6 +34,7 @@ from func_rm_dups_varID import rm_dup_var_id
 from func_add_pheno import add_pheno
 from func_test_missing import test_missing
 from func_track import get_num_lines
+from func_extract_ceu import extract_ceu
 
 DATE = datetime.now().strftime('%Y-%m-%d')
 start = time.time()
@@ -53,6 +54,7 @@ output_dir = results.output_dir
 # FUNCTIONS
 # -----------
 
+
 def update_counts(label, fam_ct, bim_ct):
 
     TRACK_INDVID_DICT[label] = fam_ct
@@ -70,14 +72,14 @@ def safe_mkdir(path):
 # MAIN
 # -----------
 
-#### !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
-#               ONLY FOR DEV/TESTING SCRIPTS... 
+# !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
+#               ONLY FOR DEV/TESTING SCRIPTS...
 # plink_prefix = "MEGA_ex_Array_Ancestry_MEGA_preQC_GRID"  # prefix before .bed/.bim/.ped
 # data_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
 # data_dir = "/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/raw_preQC"
 # output_dir = "/Users/abin-personal/Documents/katja_biobank/katja_biobank/data"
 # output_dir = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank"
-#### !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
+# !!!!! ##### !!!!! #### !!!!! ##### !!!!! #### !!!!! ##### !!!!! ##### !!!!! ##### !!!!!
 
 # make a folder to hold all the analysis & outputs
 os.mkdir(os.path.join(output_dir, plink_prefix+"_qc"))
@@ -146,11 +148,19 @@ update_counts('rm_dup_snps', fam_ct, bim_ct)
 
 (vars_miss_removed_plink_prefix, rm_miss_var_stdout), fam_ct, bim_ct = test_missing(
     no_dups_vars_plink_prefix, output_dir, base_prefix)
-update_counts('rm_test_miss_snps', fam_ct, bim_ct)
+update_counts('rm_cctrl_miss_snps', fam_ct, bim_ct)
+
+#
+#   KEEP ONLY CEU INDIVIDUALS
+#
+(ceu_only_plink_prefix, plink_stdout), fam_ct, bim_ct = extract_ceu(
+    vars_miss_removed_plink_prefix, output_dir, base_prefix, prefix='temp_ceu_only')
+update_counts('keep_ceu', fam_ct, bim_ct)
 
 
 # =============  CALC FINAL STATS =============
-(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(raw_plink_prefix, output_dir, base_prefix, prefix='inter_final_stats')
+(frq_and_miss_plink_prefix, plink_stdout), fam_ct, bim_ct = calc_stats(
+    ceu_only_plink_prefix, output_dir, base_prefix, prefix='final_qc')
 update_counts('final_stats', fam_ct, bim_ct)
 
 #
@@ -160,8 +170,8 @@ update_counts('final_stats', fam_ct, bim_ct)
 ind_ct_df = pd.DataFrame(TRACK_INDVID_DICT, index=[base_prefix])
 snp_ct_df = pd.DataFrame(TRACK_SNP_DICT, index=[base_prefix])
 
-ind_ct_df = ind_ct_df.reset_index().rename(columns={'index':'batch'})
-snp_ct_df = snp_ct_df.reset_index().rename(columns={'index':'batch'})
+ind_ct_df = ind_ct_df.reset_index().rename(columns={'index': 'batch'})
+snp_ct_df = snp_ct_df.reset_index().rename(columns={'index': 'batch'})
 
 ind_count_file = os.path.join(output_dir, 'counts_individuals_{}.tsv'.format(base_prefix))
 snps_count_file = os.path.join(output_dir, 'counts_snps_{}.tsv'.format(base_prefix))

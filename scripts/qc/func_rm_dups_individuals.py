@@ -19,7 +19,7 @@ from func_run_shell_cmd import run_shell_cmd
 
 
 @track_fx
-def rm_dup_individuals(input_prefix, output_dir, base_prefix):
+def rm_dup_individuals(input_prefix, output_dir, base_prefix, prefix='temp_dedups_fids'):
     """
     Plink wrapper to remove duplicate individuals.
         - The first instance is retained, all other are removed. 
@@ -51,8 +51,8 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix):
     full_path, pprefix = os.path.split(input_prefix)
 
     # =============  OUTPUT FILES =============
-    duplicated_samples_file = os.path.join(output_dir, 'temp_dups_samples_to_rm{}.csv'.format(base_prefix))
-    no_dups_plink_prefix = os.path.join(output_dir, "temp_dedups_{}".format(base_prefix))
+    duplicated_samples_file = os.path.join(output_dir, '{}_samples_to_rm{}.csv'.format(prefix,base_prefix))
+    no_dups_plink_prefix = os.path.join(output_dir, "{}_{}".format(prefix, base_prefix))
 
     # =============  REMOVE DUPLICATE SAMPLES =============
     # read fam file
@@ -60,7 +60,8 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix):
 
     assert fam_df[~(fam_df.FID == fam_df.IID)].shape[0] == 0,\
         "FID and IID are *not* the same in this file:\n{}".format(input_prefix+".fam")
-
+    
+   
     # identify duplicated FID&IID
     dup_index = fam_df[fam_df.duplicated(subset=['FID', 'IID'], keep='first')].index
     dup_fids = fam_df.iloc[dup_index, :].FID.unique()
@@ -81,6 +82,7 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix):
 
     # OVERWRITE existing .fam to tagging duplicates
     fam_df.to_csv(input_prefix+".fam", sep=" ", header=None, index=None)
+
 
     # plink to rm duplicates
     if (fam_df.loc[dup_index, ['FID', 'IID']].shape[0] > 0):

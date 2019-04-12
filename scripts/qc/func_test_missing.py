@@ -20,7 +20,7 @@ from func_track import track_fx
 from func_run_shell_cmd import run_shell_cmd
 
 @track_fx
-def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001):
+def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, prefix="inter_"):
     """
     Tests for differences in missing call counts for each variant between cases and controls.
     Vairiants with significant p-value after mult. testing is removed. 
@@ -35,7 +35,8 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001):
         the original plink prefix to be modified for output plink prefix 
     pval_threshold : float
         variatns w/ p values less than this will be reported for --test-missing
-
+    prefix : str
+        prefix to append to plink output
 
     WARNING: 
         IF no snps pass pval threshold to be removed, --make-bed is still run,
@@ -53,9 +54,11 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001):
     full_path, pprefix = os.path.split(input_prefix)
 
     # =============  OUTPUT FILES =============
-    test_missing_output = os.path.join(output_dir, "inter_test_missing_snps_{}".format(base_prefix))
-    snps_to_rm  = os.path.join(output_dir, "inter_snps_to_rm_case_control_missingess_{}.txt".format(base_prefix))
-    clean_case_ctrl_snps_plink_prefix = os.path.join(output_dir, "clean_cctrl_miss_{}".format(base_prefix))
+    test_missing_output = os.path.join(output_dir, "{}_cctrl_miss_snps_{}".format(prefix, base_prefix))
+    snps_to_rm  = os.path.join(output_dir, "{}_cctrl_miss_snps_to_rm_{}.txt".format(prefix, base_prefix))
+    clean_case_ctrl_snps_plink_prefix = os.path.join(output_dir, "{}_cctrl_miss_snps_{}".format(prefix, base_prefix))
+
+    
     # ============= TEST FOR MISSING RATE BETWEEN CASES AND CONTROL =============
     #   note: if no snps pass the pval threshol, plink still writes a file with headers but no other rows...
     shell_cmd = ("plink --bfile {}"
