@@ -47,7 +47,7 @@ def maf_filter(input_prefix, output_dir, base_prefix, prefix='temp_maf_filtered_
     maf_filtered_plink_file = os.path.join(output_dir, "{}_{}".format(prefix, base_prefix))
 
     # =============  RM FIDS  =============
-    maf_cmd = "plink --bfile {} --maf 0.05 --out {}".format(input_prefix, maf_filtered_plink_file)
+    maf_cmd = "plink --bfile {} --maf 0.05 --make-bed --out {}".format(input_prefix, maf_filtered_plink_file)
     plink_stdout = run_shell_cmd(maf_cmd)
 
     return maf_filtered_plink_file, plink_stdout
