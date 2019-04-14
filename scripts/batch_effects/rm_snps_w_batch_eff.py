@@ -1,5 +1,5 @@
 #!/bin/python
-# This script will combine the list of snps for each batch with batch effects and then remove them each batch file.
+# This script will aggregate snp with batch effects and then remove them each batch file.
 #
 #
 #
