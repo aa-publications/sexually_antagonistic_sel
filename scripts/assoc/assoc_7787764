@@ -1,0 +1,36 @@
+
+The following have been reloaded with a version change:
+  1) Anaconda3/4.4.0 => Anaconda3/5.0.1
+
+Running:
+plink --bfile /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merged_MEGA_2019-04-12 --covar /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/covar_CEU_merged_mega_age_5PC_2019-04-14.tsv --covar-name YOB, ARRAY, PC1, PC2, PC3, PC4, PC5 --adjust gc --logistic no-x-sex --ci 0.95 --out /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_14_logistic_assoc/merged_MEGA_w_covar
+Traceback (most recent call last):
+  File "test_for_assoc.py", line 52, in <module>
+    shell_stdout_model = run_shell_cmd(lr_cmd)
+  File "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/scripts/qc/func_run_shell_cmd.py", line 18, in run_shell_cmd
+    assert exit_status == 0, "COMMAND:\n{}\n\nEXIT STATUS:\n{}\n\nOUTPUT: {}".format(cmd, exit_status, output)
+AssertionError: COMMAND:
+plink --bfile /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merged_MEGA_2019-04-12 --covar /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/covar_CEU_merged_mega_age_5PC_2019-04-14.tsv --covar-name YOB, ARRAY, PC1, PC2, PC3, PC4, PC5 --adjust gc --logistic no-x-sex --ci 0.95 --out /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_14_logistic_assoc/merged_MEGA_w_covar
+
+EXIT STATUS:
+5
+
+OUTPUT: PLINK v1.90b3s 64-bit (17 Jun 2015)        https://www.cog-genomics.org/plink2
+(C) 2005-2015 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_14_logistic_assoc/merged_MEGA_w_covar.log.
+Options in effect:
+  --adjust gc
+  --bfile /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merged_MEGA_2019-04-12
+  --ci 0.95
+  --covar /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/covar_CEU_merged_mega_age_5PC_2019-04-14.tsv
+  --covar-name YOB, ARRAY, PC1, PC2, PC3, PC4, PC5
+  --logistic no-x-sex
+  --out /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_14_logistic_assoc/merged_MEGA_w_covar
+
+128404 MB RAM detected; reserving 64202 MB for main workspace.
+1872714 variants loaded from .bim file.
+48640 people (21100 males, 27540 females) loaded from .fam.
+48640 phenotype values loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Error: Missing --covar-name token in --covar file header line.
+
