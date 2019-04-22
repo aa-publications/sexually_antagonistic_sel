@@ -27,9 +27,9 @@ DATE = datetime.date.today()
 
 DEMOGRAPHICS_FILE = "/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/demographics/Capra_Preterm_A2_Phenotype.xlsx"
 ARRAY_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/mega_fid_batch_list_2019-04-14.tsv"
-PCA_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/inter_pca__merged_MEGA_2019-04-13.eigenvec"
+PCA_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/no_batch4_merged_pca/inter_pca__merged_MEGA_no_batch4_2019-04-15.eigenvec"
 
-OUTPUT_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/covar_CEU_merged_mega_age_5PC_{}.tsv".format(DATE)
+OUTPUT_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/no_batch4_merged_pca/covar_CEU_no_batch4_merged_mega_w_age_5PC_batch_{}.tsv".format(DATE)
 
 
 use_plink_pca=True
@@ -105,8 +105,8 @@ final_no_dups.rename(columns={'GRID':'FID'}, inplace=True)
 final_no_dups_reorder = final_no_dups.loc[:, ['FID','IID', 'YOB', 'PC1', 'PC2', 'PC3','PC4', 'PC5', 'ARRAY']].copy()
 
 # one hot encode
-concat_df = pd.concat([final_no_dups_reorder, pd.get_dummies(final_no_dups_reorder.ARRAY)], axis=1)
-concat_df.drop('ARRAY', axis=1, inplace=True)
+# concat_df = pd.concat([final_no_dups_reorder, pd.get_dummies(final_no_dups_reorder.ARRAY)], axis=1)
+# concat_df.drop('ARRAY', axis=1, inplace=True)
 
-concat_df.to_csv(OUTPUT_FILE, index=False, sep="\t")
+final_no_dups_reorder.to_csv(OUTPUT_FILE, index=False, sep="\t")
 print("Done. check: {}".format(OUTPUT_FILE))
