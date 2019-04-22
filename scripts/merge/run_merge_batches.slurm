@@ -1,9 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --ntasks=24
-#SBATCH --time=23:00:00
-#SBATCH --mem=90G
-#SBATCH --output=merge_%j
+#SBATCH --time=18:00:00
+#SBATCH --mem=26G
+#SBATCH --output=pca_%j
+#SBATCH --job-name=no_batch4_pca
 #SBATCH --mail-user=abraham.abin13@gmail.com
 #SBATCH --mail-type=ALL
 
