@@ -24,13 +24,12 @@ start = time.time()
 
 # =============  PATHS =============
 
-MERGED_PLINK_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merged_MEGA_2019-04-12"
-FISHER_OUTPUT_PLINK_PREFIX="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_13_fisher_exact/merged_MEGA"
-MODEL_OUTPUT_PLINK_PREFIX="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_13_geno_assoc/merged_MEGA_assoc"
-LOGISTIC_RESUTLS_OUTPUT="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_14_logistic_assoc/merged_MEGA_w_covar"
+MERGED_PLINK_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merge_batch_without_batch4/final_maf_filtered__merged_MEGA_no_batch4_2019-04-15"
+FISHER_OUTPUT_PLINK_PREFIX="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_18_glm_no_batch4/no_batch4_fisher"
 
+LOGISTIC_RESUTLS_OUTPUT="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_18_glm_no_batch4/no_batch4_glm"
 
-COVAR_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/covar_CEU_merged_mega_age_5PC_2019-04-14.tsv"
+COVAR_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/no_batch4_merged_pca/covar_CEU_no_batch4_merged_mega_w_age_5PC_batch_2019-04-18.tsv"
 
 
 # -----------
@@ -45,9 +44,15 @@ assoc_cmd = "plink --bfile {} --assoc fisher counts --out {}".format(MERGED_PLIN
 assoc_cmd = "plink --bfile {} --model fisher --out {}".format(MERGED_PLINK_FILE, MODEL_OUTPUT_PLINK_PREFIX)
 # shell_stdout_model = run_shell_cmd(assoc_cmd)
 
-# logistic regression
-lr_cmd = "plink --bfile {} --covar {} --covar-name YOB, ARRAY, PC1, PC2, PC3, PC4, PC5 --adjust gc --logistic no-x-sex --ci 0.95 --out {}".format(MERGED_PLINK_FILE, COVAR_FILE, LOGISTIC_RESUTLS_OUTPUT)
+# run using plink2 w/ glm
+lr_cmd = "plink2 --bfile {} --covar {} --glm no-x-sex  hide-covar firth-fallback  --vif 1500 --out {}".format(MERGED_PLINK_FILE, COVAR_FILE, LOGISTIC_RESUTLS_OUTPUT)
 
 print("Running:\n{}".format(lr_cmd))
 shell_stdout_model = run_shell_cmd(lr_cmd)
-print(lr_cmd.splitlines())
+
+
+
+
+
+# logistic regression
+# lr_cmd = "plink --bfile {} --covar {} --logistic no-x-sex --out {}".format(MERGED_PLINK_FILE, COVAR_FILE, LOGISTIC_RESUTLS_OUTPUT)
