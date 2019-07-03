@@ -25,7 +25,7 @@ def rm_relatedness(input_prefix, output_dir, ind_snp_output_file, base_prefix):
             - See OUTPUT FILES for all outputs files created
 
 
-        WARINING: if no highly related individuals present, 
+        WARINING: if no highly related individuals present,
         this will still run --make-bed (so that this is  compatible with pipeline)
 
 
@@ -72,7 +72,7 @@ def rm_relatedness(input_prefix, output_dir, ind_snp_output_file, base_prefix):
     related_stdout = run_shell_cmd(related_cmd)
 
     # 2) identify related individuals to remove
-    relatives_cmd = ("python helper_remove_related_individuals.py"
+    relatives_cmd = ("python /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/scripts/qc/helper_remove_related_individuals.py"
                     " {}"
                     " {}").format(related_genome_output+".genome", ids_to_remove_relatedness)
 
@@ -83,7 +83,7 @@ def rm_relatedness(input_prefix, output_dir, ind_snp_output_file, base_prefix):
         rm_relatives_cmd = ("plink --bfile {}"
                             " --remove {} --make-bed"
                             " --out {}").format(input_prefix, ids_to_remove_relatedness, related_indiv_removed_plink_prefix)
-    else: 
+    else:
         rm_relatives_cmd = ("plink --bfile {}"
                             " --make-bed"
                             " --out {}").format(input_prefix, related_indiv_removed_plink_prefix)

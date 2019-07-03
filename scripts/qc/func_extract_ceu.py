@@ -21,9 +21,9 @@ from func_run_shell_cmd import run_shell_cmd
 @track_fx
 def extract_ceu(input_prefix, output_dir, base_prefix, prefix="temp_ceu_only"):
     """
-    Filter and keep on CEU individuals. 
-        - LIST OF CEU GRIDS ARE HARD CODED! 
-    
+    Filter and keep on CEU individuals.
+        - LIST OF CEU GRIDS ARE HARD CODED!
+
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ def extract_ceu(input_prefix, output_dir, base_prefix, prefix="temp_ceu_only"):
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
     prefix : str
         prefix to append to plink output
 
@@ -40,7 +40,7 @@ def extract_ceu(input_prefix, output_dir, base_prefix, prefix="temp_ceu_only"):
     -------
     dups_removed_plink_prefix : str
         - full path with plink prefix with duplicate samples removed
-    plink_stdout : str 
+    plink_stdout : str
         - STDOUT from running plink command
 
 

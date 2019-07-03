@@ -30,13 +30,13 @@ def pca(input_prefix, output_dir, base_prefix, prefix='temp_pca_'):
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
 
     Returns
     -------
     hwe_outputs : str
         - prefix for plink hwe outputs
-    plink_stdout : str 
+    plink_stdout : str
         - STDOUT from running plink command
 
 

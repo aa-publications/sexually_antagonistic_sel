@@ -22,10 +22,10 @@ from func_run_shell_cmd import run_shell_cmd
 def rm_dup_individuals(input_prefix, output_dir, base_prefix, prefix='temp_dedups_fids'):
     """
     Plink wrapper to remove duplicate individuals.
-        - The first instance is retained, all other are removed. 
+        - The first instance is retained, all other are removed.
         - See OUTPUT FILES for all outputs files created
 
-    WARNING: 
+    WARNING:
         - The original .fam file will be overwritten with dupllicated. 
         - If there are no duplicates, then --make-bed is still run (to fit with the pipeline)
 
@@ -33,17 +33,17 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix, prefix='temp_dedup
     Parameters
     ----------
     input_prefix : str
-        full path with plink prefix of file 
+        full path with plink prefix of file
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
 
     Returns
     -------
     dups_removed_plink_prefix : str
         - full path with plink prefix with duplicate samples removed
-    plink_stdout : str 
+    plink_stdout : str
         - STDOUT from running plink command
 
 
@@ -60,8 +60,8 @@ def rm_dup_individuals(input_prefix, output_dir, base_prefix, prefix='temp_dedup
 
     assert fam_df[~(fam_df.FID == fam_df.IID)].shape[0] == 0,\
         "FID and IID are *not* the same in this file:\n{}".format(input_prefix+".fam")
-    
-   
+
+
     # identify duplicated FID&IID
     dup_index = fam_df[fam_df.duplicated(subset=['FID', 'IID'], keep='first')].index
     dup_fids = fam_df.iloc[dup_index, :].FID.unique()

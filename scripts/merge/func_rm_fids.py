@@ -23,7 +23,7 @@ def rm_fids(dups_file, input_prefix, output_dir, base_prefix, prefix='temp_dedup
     """
     Plink wrapper to remove duplicate individuals GIVEN A FILE W/ IDS TO REMOVE
 
-    WARNING: 
+    WARNING:
         - If there are no duplicates, then --make-bed is still run (to fit with the pipeline)
 
 
@@ -32,17 +32,17 @@ def rm_fids(dups_file, input_prefix, output_dir, base_prefix, prefix='temp_dedup
     dups_file : str
         full path to tsv file with one line per FID and IID to remove
     input_prefix : str
-        full path with plink prefix of file 
+        full path with plink prefix of file
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
 
     Returns
     -------
     dups_removed_plink_prefix : str
         - full path with plink prefix with duplicate samples removed
-    plink_stdout : str 
+    plink_stdout : str
         - STDOUT from running plink command
 
 
@@ -54,7 +54,7 @@ def rm_fids(dups_file, input_prefix, output_dir, base_prefix, prefix='temp_dedup
 
     # =============  RM FIDS  =============
 
-    if os.path.isfile(dups_file): 
+    if os.path.isfile(dups_file):
         if  os.path.getsize(dups_file) > 0:
             rm_dups_cmd = "plink --bfile {} --remove {} --make-bed --out {}".format(
                 input_prefix, dups_file, no_dups_plink_prefix)

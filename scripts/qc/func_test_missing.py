@@ -23,8 +23,8 @@ from func_run_shell_cmd import run_shell_cmd
 def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, prefix="inter_"):
     """
     Tests for differences in missing call counts for each variant between cases and controls.
-    Vairiants with significant p-value after mult. testing is removed. 
-    
+    Vairiants with significant p-value after mult. testing is removed.
+
     Parameters
     ----------
     input_prefix : str
@@ -32,13 +32,13 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, 
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
     pval_threshold : float
         variatns w/ p values less than this will be reported for --test-missing
     prefix : str
         prefix to append to plink output
 
-    WARNING: 
+    WARNING:
         IF no snps pass pval threshold to be removed, --make-bed is still run,
         so that it is compatiable with pipeline...
 
@@ -58,7 +58,7 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, 
     snps_to_rm  = os.path.join(output_dir, "{}_cctrl_miss_snps_to_rm_{}.txt".format(prefix, base_prefix))
     clean_case_ctrl_snps_plink_prefix = os.path.join(output_dir, "{}_cctrl_miss_snps_{}".format(prefix, base_prefix))
 
-    
+
     # ============= TEST FOR MISSING RATE BETWEEN CASES AND CONTROL =============
     #   note: if no snps pass the pval threshol, plink still writes a file with headers but no other rows...
     shell_cmd = ("plink --bfile {}"
@@ -71,7 +71,7 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, 
 
     miss_df = pd.read_csv(test_missing_output+".missing", sep="\s+")
 
-    if (miss_df.shape[0] > 0): 
+    if (miss_df.shape[0] > 0):
         miss_df.SNP.to_csv(snps_to_rm, sep=" ", header=False, index=False)
         rm_snps_cmd = ("plink --bfile {}"
                 " --exclude {}"
@@ -83,7 +83,7 @@ def test_missing(input_prefix, output_dir, base_prefix, pval_threshold=0.00001, 
                 " --make-bed"
                 " --out {}").format(input_prefix, clean_case_ctrl_snps_plink_prefix)
 
-    
+
 
     rm_snps_stdout = run_shell_cmd(rm_snps_cmd)
     all_stdout = (test_miss_stdout, rm_snps_stdout)
