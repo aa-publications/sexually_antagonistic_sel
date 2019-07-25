@@ -1,0 +1,6 @@
+
+
+
+NOTE:
+In func_rm_discordant_sex.py:
+    after removing individuals w/  discordant sex; the  --set-hh-missing is run! 
