@@ -21,10 +21,9 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-DATE = datetime.now().strftime('%Y-%m-%d')
-
 import argparse
 
+DATE = datetime.now().strftime('%Y-%m-%d')
 
 ###
 #   INPUT FILES
@@ -34,7 +33,7 @@ import argparse
 ### REQUIRED ARGUMENTS IN ORDER
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('assoc_file', action='store', type=str)
-parser.add_argument('gwas_pval_tresh', action='store', type=str)
+parser.add_argument('gwas_pval_tresh', action='store', type=int)
 parser.add_argument('flank_bp', action='store', type=int)
 parser.add_argument('output_file', action='store', type=str)
 parser.add_argument('output_file_key', action='store', type=str)
@@ -43,28 +42,31 @@ results = parser.parse_args()
 
 ASSOC_FILE = results.assoc_file
 PVAL_THRESH = results.gwas_pval_tresh
-flank_bp = results.flank_bp
+FLANK_BP = results.flank_bp
 OUTPUT_FILE = results.output_file
 OUTPUT_FILE_KEY = results.output_file_key
 
 
-pval_thresh = 0.5*10**-5
+# pval_thresh = 0.5*10**-5
+# seperator used by pd.read_csv (changed depeneding which plink version was used to genreate the ASSOC_FILE)
 SEPERATOR=","
 
 
 
 
-# assoc_file ="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic/katja_results/20190722_gwas_pca12_age.csv"
+# ASSOC_FILE = '/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/assoc_from_katja_2019_08_20/20190819_gwas_pca12_centers_age_FINAL.csv'
+# PVAL_THRESH=1
+# FLANK_BP=50
 # OUTPUT_DIR = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic/katja_results"
-
-# OUTPUT_FILE = os.path.join(OUTPUT_DIR, 'seqList_for_twoBitToFa_{}.txt'.format(DATE))
-# OUTPUT_FILE_KEY = os.path.join(OUTPUT_DIR, 'key_for_seqList_for_twoBitToFa_{}.tsv'.format(DATE))
+# OUTPUT_FILE = '/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_08_21_blat_pipeline/all_gwas_hits/50bp/seqList_for_twoBitToFa_2019_08_24.tsv'
+# OUTPUT_FILE_KEY = '/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_08_21_blat_pipeline/all_gwas_hits/50bp/key_for_seqList_for_twoBitToFa_2019_08_24.tsv'
 
 
 ###
 #   MAIN
 ###
-print("Running:\n{}".format(sys.argv))
+print("Running:\n{}".format('\n\t'.join(sys.argv)))
+print(" ")
 
 # select SNPS to create seqList
 as_df = pd.read_csv(ASSOC_FILE, sep=SEPERATOR)
@@ -76,8 +78,8 @@ sig_snps_df = as_df.loc[ (as_df['P'] < PVAL_THRESH) & (as_df['P'] !=0) & (as_df[
 # chr1:0-189
 # [start,end)
 
-left_flank=int(flank_bp/2)
-right_flank=int(flank_bp/2)
+left_flank=int(FLANK_BP/2)
+right_flank=int(FLANK_BP/2)
 print("num bases on left and rigth: {}, {}".format(left_flank, right_flank))
 sig_snps_df['seq_start'] = sig_snps_df.BP - left_flank # take 25 bases to the left of index position
 sig_snps_df['seq_end'] = sig_snps_df.BP + right_flank # take 25 bases to the left of index position inclusive

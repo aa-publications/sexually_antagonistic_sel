@@ -44,7 +44,9 @@ OUTPUT_FILE = results.output_dir
 ###
 #   MAIN
 ###
-print(sys.argv)
+print("Running:\n{}".format('\n\t'.join(sys.argv)))
+print(" ")
+
 
 pl_output=pd.read_csv(PLINK_ASSOC_FILE, sep="\s+")
 bl_output=pd.read_csv(BLAT_FILE, sep="\t",header=None, names=['Query', 'Subject', '%id', 'alignment_length',
