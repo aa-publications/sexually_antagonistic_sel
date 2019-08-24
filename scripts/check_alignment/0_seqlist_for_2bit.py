@@ -1,6 +1,10 @@
 #!/bin/python
 # This script will take plink assoc output and create a list of sequence to pull using twoBItToFa
 #
+#
+#
+#
+#
 # assoc_file: full path to plink output from assoc analysis
 # this file must include the following headers:
 #       >  BP
@@ -22,9 +26,6 @@ DATE = datetime.now().strftime('%Y-%m-%d')
 import argparse
 
 
-pval_thresh = 0.5*10**-5
-SEPERATOR=","
-
 ###
 #   INPUT FILES
 ###
@@ -33,6 +34,7 @@ SEPERATOR=","
 ### REQUIRED ARGUMENTS IN ORDER
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('assoc_file', action='store', type=str)
+parser.add_argument('gwas_pval_tresh', action='store', type=str)
 parser.add_argument('flank_bp', action='store', type=int)
 parser.add_argument('output_file', action='store', type=str)
 parser.add_argument('output_file_key', action='store', type=str)
@@ -40,9 +42,14 @@ results = parser.parse_args()
 
 
 ASSOC_FILE = results.assoc_file
+PVAL_THRESH = results.gwas_pval_tresh
 flank_bp = results.flank_bp
 OUTPUT_FILE = results.output_file
 OUTPUT_FILE_KEY = results.output_file_key
+
+
+pval_thresh = 0.5*10**-5
+SEPERATOR=","
 
 
 
@@ -61,7 +68,7 @@ print("Running:\n{}".format(sys.argv))
 
 # select SNPS to create seqList
 as_df = pd.read_csv(ASSOC_FILE, sep=SEPERATOR)
-sig_snps_df = as_df.loc[ (as_df['P'] < pval_thresh) & (as_df['P'] !=0) & (as_df['TEST'] == "ADD" ) ].copy()
+sig_snps_df = as_df.loc[ (as_df['P'] < PVAL_THRESH) & (as_df['P'] !=0) & (as_df['TEST'] == "ADD" ) ].copy()
 
 
 # create list for twoBItToFa
