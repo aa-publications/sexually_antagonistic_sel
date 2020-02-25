@@ -1,6 +1,6 @@
  
 Running:
-blat /dors/capra_lab/data/dna/human/hg19/hg19.2bit /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/UKBB_WCSF_probes.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/UKBB_WCSF_probes_blat.txt -out=blast
+blat /dors/capra_lab/data/dna/human/hg19/hg19.2bit /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/fa/UKBB_WCSF_probes.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/blat_output/UKBB_WCSF_probes_blat.txt -out=blast
 Loaded 3137161264 letters in 93 sequences
-Searched 120058092 bases in 1690960 sequences
-Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/UKBB_WCSF_probes_blat.txt
+Searched 110927634 bases in 1562362 sequences
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/blat_output/UKBB_WCSF_probes_blat.txt
