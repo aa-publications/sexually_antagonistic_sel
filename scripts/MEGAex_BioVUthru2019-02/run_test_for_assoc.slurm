@@ -5,11 +5,9 @@
 #SBATCH --time=4:50:00
 #SBATCH --mem=12G
 #SBATCH --output=assoc_%J.out
-#SBATCH --job-name=assoc
+#SBATCH --job-name=assoc 
 
-module load Anaconda3
-module load PLINK/2.00-alpha1
-source activate py36_r_ml
+module load PLINK/1.9b_5.2
 
 
 
@@ -17,26 +15,24 @@ source activate py36_r_ml
 # python test_for_assoc.py
 
 
-PLINK_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/maf_filtered/final_maf_filtered__final_qc_MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3"
+# PLINK_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02_keep_missingness/MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3_qc/final_qc_MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3"
 # COVAR_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/covariates/covar_white_YOB_5PC__2019-07-05.tsv"
 COVAR_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/covariates/covar_white_YOB_12PC__2019-07-21.tsv"
 LOGISTIC_RESUTLS_OUTPUT="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic"
+bv_sig_snps_file="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/scripts/MEGAex_BioVUthru2019-02/biovu_sig_snps.txt"
 
-
+missingness_dir="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3_qc/intermediate"
+missingness_file=${missingness_dir}"/inter__cctrl_miss_snps_to_rm_MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3.txt"
 
 # -----------
 # MAIN
 # -----------
 #
 
-# run using plink2 w/ glm
-# sex is not included for ANY of the variants with ' no-x-sex '
-# covar-variance-standardize mean 0, variance 1
+PLINK_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02_keep_missingness/MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3_qc/temp_white_only_MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3"
+LOGISTIC_RESUTLS_OUTPUT="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2020_01_27_rerun_missingness_biovu_snps"
 
-echo "plink2 --bfile ${PLINK_FILE} --covar ${COVAR_FILE} --glm firth-fallback intercept --covar-variance-standardize YOB --vif 1500 --out ${LOGISTIC_RESUTLS_OUTPUT}"
-
-#plink2 --bfile ${PLINK_FILE} --covar ${COVAR_FILE} --glm firth-fallback intercept --covar-variance-standardize YOB --vif 1500 --out ${LOGISTIC_RESUTLS_OUTPUT} >> glm.out
-
-
-
-plink --bfile ${PLINK_FILE} --covar ${COVAR_FILE} --logistic --out ${LOGISTIC_RESUTLS_OUTPUT} >> glm.out
+plink --bfile ${PLINK_FILE} --extract $missingness_file --covar $COVAR_FILE --logistic  --out ${LOGISTIC_RESUTLS_OUTPUT}"/rerun_missingness_assoc"
+# 
+# plink --bfile ${PLINK_FILE} --extract ${bv_sig_snps_file} --freqx --hardy midp --missing --test-mishap --mendel --het --ibc --fst case-control --out ${LOGISTIC_RESUTLS_OUTPUT}"/bv_sig_hits_stats"
+# plink --bfile ${PLINK_FILE} --extract ${bv_sig_snps_file} --freq case-control --out ${LOGISTIC_RESUTLS_OUTPUT}"/bv_sig_hits_stats"

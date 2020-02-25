@@ -21,22 +21,22 @@ from func_run_shell_cmd import run_shell_cmd
 @track_fx
 def maf_filter(input_prefix, output_dir, base_prefix, prefix='temp_maf_filtered_'):
     """
-    Run HWE in plink. 
+    Revmove variants under specified minor allele frequency.
 
     Parameters
     ----------
     input_prefix : str
-        full path with plink prefix of file 
+        full path with plink prefix of file
     ouput_dir : str
         full path to directory to write outputs
     base_prefix : str
-        the original plink prefix to be modified for output plink prefix 
+        the original plink prefix to be modified for output plink prefix
 
     Returns
     -------
-    hwe_outputs : str
-        - prefix for plink hwe outputs
-    plink_stdout : str 
+    plink_stdout : str
+        - prefix for plink maf outputs
+    plink_stdout : str
         - STDOUT from running plink command
 
 
@@ -47,7 +47,8 @@ def maf_filter(input_prefix, output_dir, base_prefix, prefix='temp_maf_filtered_
     maf_filtered_plink_file = os.path.join(output_dir, "{}_{}".format(prefix, base_prefix))
 
     # =============  RM FIDS  =============
-    maf_cmd = "plink --bfile {} --maf 0.05 --make-bed --out {}".format(input_prefix, maf_filtered_plink_file)
+    maf_threshold = 0.01
+    maf_cmd = "plink --bfile {} --maf {} --make-bed --out {}".format(input_prefix, maf_threshold, maf_filtered_plink_file)
     plink_stdout = run_shell_cmd(maf_cmd)
 
     return maf_filtered_plink_file, plink_stdout

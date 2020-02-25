@@ -1,9 +1,9 @@
 #!/bin/python
 # This script will create the covariates table for PheWAS run on all individuals with MEGAx array data in BioVU.
-#           * keeps 5PCs from plink pca 
+#           * keeps 5PCs from plink pca
 #           * add age as YOB
 #           * add batch
-#           * geneder is removed! 
+#           * geneder is removed!
 #
 # Abin Abraham
 # created on: 2019-04-14 10:21:24
@@ -21,10 +21,11 @@ DATE = datetime.date.today()
 # PATHS
 # -----------
 
-# 
+#
 # **************** USER MUST MODIFY ****************
-# 
+#
 
+# needs ['GRID', 'GENDER', 'YOB']
 DEMOGRAPHICS_FILE = "/dors/capra_lab/users/abraha1/projects/PTB_phewas/data/biovu_samples_MEGAx_phewas/demographics/Capra_Preterm_A2_Phenotype.xlsx"
 ARRAY_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/mega_fid_batch_list_2019-04-14.tsv"
 PCA_FILE = "/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/no_batch4_merged_pca/inter_pca__merged_MEGA_no_batch4_2019-04-15.eigenvec"

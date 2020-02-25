@@ -13,7 +13,10 @@ module load PLINK/2.00-alpha1
 source activate py36_r_ml
 
 
-plink2 --bfile /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/merge_batches/merge_batch_without_batch4/final_maf_filtered__merged_MEGA_no_batch4_2019-04-15 --covar /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/mega_data/covariates/no_batch4_merged_pca/covar_CEU_no_batch4_merged_mega_w_age_5PC_batch_2019-04-18.tsv --glm no-x-sex  hide-covar firth-fallback --vif 1500 --out /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_04_18_glm_no_batch4/no_batch4_glm  >> glm.out
+bfile="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3_qc/impute/final_imputed/test/mega_test"
+outfile="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/MEGAex_BioVUthru2019-02/MEGAex_BioVUthru2019-02_BestOfMultipleCalls_Capra_Preterm_A3_qc/impute/final_imputed/test/pl2_ffallback"
+
+plink2 --bfile $bfile --glm no-x-sex firth-fallback --vif 1500 --out $outfile
 
 # Pass your Python script to the Anaconda3 python intepreter for execution
 # python test_for_assoc.py

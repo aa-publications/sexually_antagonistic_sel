@@ -1,14 +1,14 @@
 #!/bin/python
-# This script will look throug pairs of related individuals and remove one randomly. 
+# This script will look throug pairs of related individuals and remove one randomly.
 #          * input: plink --genome output file with *.genome
 #
 #          * output: 2 column tab seperated file with IID and FID to remove
 #
 #
-#          * WARNING: If no related individuals to remove, output file is not written! 
-# 
-# 
-# 
+#          * WARNING: If no related individuals to remove, output file is not written!
+#
+#
+#
 # Abin Abraham
 # created on: 2018-10-04 14:19:39
 
@@ -43,9 +43,9 @@ for _, row in df.iterrows():
 
     fid1, fid2 = row[0], row[1]
 
-    if (fid1 not in fid_removed) and (fid2 not in fid_removed): 
-        # neither fids have already been removed 
-        
+    if (fid1 not in fid_removed) and (fid2 not in fid_removed):
+        # neither fids have already been removed
+
         # so remove 1 of them
         fid_removed.add(fid2)
 
@@ -53,7 +53,7 @@ final_df = pd.DataFrame( {'FID': list(fid_removed),'IID':list(fid_removed)})
 
 if (final_df.shape[0] > 0):
         final_df.to_csv(output_file, sep="\t", index=False, header=False)
-else: 
+else:
         print("No highly realted individuals to remove...")
 
 print("Total FIDs removed {}".format(len(fid_removed)))

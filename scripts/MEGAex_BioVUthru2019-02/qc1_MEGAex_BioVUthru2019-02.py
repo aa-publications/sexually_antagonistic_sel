@@ -30,7 +30,7 @@ from func_run_shell_cmd import run_shell_cmd
 from func_rm_dups_individuals import rm_dup_individuals
 from func_rm_discordant_sex import rm_discordant_sex
 from func_rm_high_sample_missing_rate import rm_high_sample_missing_rate
-from func_rm_high_het_rate import rm_high_het_rate
+from func_rm_high_het_rate import rm_high¡_het_rate
 from func_rm_relatedness import rm_relatedness
 from func_rm_high_variant_missing_rate import rm_high_variant_missing_rate
 from func_rm_dups_varID import rm_dup_var_id

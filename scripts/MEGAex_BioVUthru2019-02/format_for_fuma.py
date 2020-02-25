@@ -21,11 +21,24 @@ DATE = datetime.now().strftime('%Y-%m-%d')
 # -----------
 
 FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic/2019_07_21_logistic.assoc.logistic"
-OUTPUT_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic/2019_07_21_logistic.assoc.logistic.for_fuma.tsv"
+OUTPUT_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_07_21_logistic/2019_07_21_logistic.assoc.logistic.for_fuma.tsv1"
+
+# FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_11_21_imputed_mega/snps_only_pl2_covar_standar.PHENO1.glm.logistic.hybrid"
+# OUTPUT_FILE="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/2019_11_21_imputed_mega/snps_only_pl2_covar_standar.PHENO1.glm.logistic.hybrid.for.fuma.tsv"
+
+
+is_plink2=False
 
 #
-raw_df = pd.read_csv(FILE, sep="\s+")
-df = raw_df.loc[raw_df['TEST'] == "ADD", :].copy()
+
+if is_plink2:
+    col_names=["#CHROM","BP","SNP","REF", "ALT", "A1", "FIRTH?", "TEST", "OBS_CT", "OR", "LOG(OR)_SE", "Z_STAT", "P"]
+    raw_df = pd.read_csv(FILE, sep="\t", names=col_names)
+    df = raw_df.loc[raw_df['TEST'] == "ADD", :].copy()
+else:
+    col_names=["CHR","SNP", "BP", "A1", "TEST", "NMISS", "OR", "STAT", "P"]
+    raw_df = pd.read_csv(FILE, sep="\s+", names=col_names)
+    df = raw_df.loc[raw_df['TEST'] == "ADD", :].copy()
 
 df['effect_allle'] = df.A1
 # df['non_effect_allele'] = df.apply(lambda x: x.REF if x.A1 == x.ALT else x.ALT, axis=1)
@@ -33,19 +46,18 @@ df['effect_allle'] = df.A1
 df.rename(columns={'#CHROM':'CHR', 'POS':'BP', 'ID':'SNP'}, inplace=True)
 
 
-final_df = df.loc[:, ['SNP','CHR','BP','effect_allle','P','OR']].copy()
-final_df.sort_values('P', inplace=True)
+filtered_df = df.loc[:, ['SNP','CHR','BP','effect_allle','P','OR']].copy()
+filtered_df['CHR'] = filtered_df['CHR'].map(int)
+# keep only autosoems
+final_df = filtered_df.loc[filtered_df['CHR'] <23].copy()
 
 
-# remove XY  to X region
-final_df.loc[final_df['CHR'] =='XY', 'CHR'] = "X"
-
-# remove MT
-to_write_df = final_df.loc[final_df['CHR'] !='MT'].copy()
+final_df['float_P'] = final_df.P.apply(lambda x: float(x))
+final_df.sort_values('float_P', inplace=True)
+final_df.drop(columns={'float_P'}, inplace=True)
 
 
-
-to_write_df.to_csv(OUTPUT_FILE, sep="\t", index=False, float_format="%e")
+final_df.to_csv(OUTPUT_FILE, sep="\t", index=False, float_format="%e")
 
 #
 #
