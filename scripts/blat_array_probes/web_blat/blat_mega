@@ -1,0 +1,7 @@
+/dors/capra_lab/opt/kent-tools/blat/blat -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 /dors/capra_lab/data/dna/human/hg19/hg19.2bit /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/fa/sig_hits_ukbb_wcsf_probes.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/webblat_wublast_format/ukbb_wcsf_probes_v1_blat_wublast -out=wublast
+Loaded 3137161264 letters in 93 sequences
+Searched 300 bases in 6 sequences
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/biovu_probes/webblat_wublast_format/MEGAEx_probes_v1_blat_wublast.txt
+Loaded 3137161264 letters in 93 sequences
+Searched 1136 bases in 16 sequences
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/webblat_wublast_format/ukbb_wcsf_probes_v1_blat_wublast

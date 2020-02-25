@@ -1,0 +1,3 @@
+/dors/capra_lab/opt/kent-tools/blat/blat -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 /dors/capra_lab/data/dna/human/hg19/hg19.2bit ukbb_wcsf17.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_wcsf/webblat_ukbb_wcsf17.fa.out
+mustOpen: Can't open ukbb_wcsf17.fa to read: No such file or directory
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_wcsf/webblat_ukbb_wcsf17.fa.out

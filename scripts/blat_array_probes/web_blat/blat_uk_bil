@@ -1,0 +1,8 @@
+/dors/capra_lab/opt/kent-tools/blat/blat -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 /dors/capra_lab/data/dna/human/hg19/hg19.2bit ukbb_UKBiL11.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_bil/webblat_ukbb_UKBiL11.fa.out
+mustOpen: Can't open ukbb_UKBiL11.fa to read: No such file or directory
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_bil/webblat_ukbb_UKBiL11.fa.out
+mustOpen: Can't open ukbb_UKBiL22.fa to read: No such file or directory
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_bil/webblat_ukbb_UKBiL22.fa.out
+/dors/capra_lab/opt/kent-tools/blat/blat -stepSize=5 -repMatch=2253 -minScore=20 -minIdentity=0 /dors/capra_lab/data/dna/human/hg19/hg19.2bit ukbb_UKBiL20.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_bil/webblat_ukbb_UKBiL20.fa.out
+mustOpen: Can't open ukbb_UKBiL20.fa to read: No such file or directory
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/uk_bil/webblat_ukbb_UKBiL20.fa.out

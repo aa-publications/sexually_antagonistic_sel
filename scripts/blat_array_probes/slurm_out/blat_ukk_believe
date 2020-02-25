@@ -1,0 +1,6 @@
+ 
+Running:
+blat /dors/capra_lab/data/dna/human/hg19/hg19.2bit /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/ukbb_UKBiLEVE_probes.fa /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/UKBB_UKBiLEVE_probes_blat.txt -out=blast
+Loaded 3137161264 letters in 93 sequences
+Searched 118297644 bases in 1666164 sequences
+Done! Check /dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/ukbb_probes/fa/UKBB_UKBiLEVE_probes_blat.txt
