@@ -1,3 +1,4 @@
+
 #!/bin/python
 # This script will
 #
@@ -37,6 +38,7 @@ MISS_P_THRESHOLD = 0.00001
 # -----------
 
 # WEBBLAT
+
 WEBBLAT_UKBIL="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/ukbil_w_score/chrxy_UKBil_probes_webscores.txt"
 WEBBLAT_UKWCSF="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/ukbb_probes/web_blat/ukwcsf_w_score/chrxy_ukwcsf_probes_webscores.txt"
 WEBBLAT_BV="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/data/blat_array_probes/biovu_probes/blat_psl/chrxy_MEGAx_probes_v1_blat_webscores.txt"
@@ -222,9 +224,9 @@ if __name__ == '__main__':
     # -----------
 
 
-    # note: no variatns are removed; a column for filterign is added
+    # note: no variatns are removed; a column for filtering is added
     # biovu
-    bv_webblat_df, all_bv_webblat_df = bv_blat_filter(og_bv_webblat_df)
+    bv_webblat_df, all_bv_webblat_df =  bv_blat_filter(og_bv_webblat_df)
 
     # ukbb
     ukbil_webblat_df, all_ukbil_webblat_df = uk_array_filter(og_ukbil_webblat_df)
@@ -242,14 +244,13 @@ if __name__ == '__main__':
     # pool both uk arrays
     both_uk_webblat_df = pd.concat([ukbil_webblat_df, ukwcsf_webblat_df],axis=0)
 
-    # w/o filtering out bad blat hits
+    # after filtering out bad blat hits
     uk_best_webblast_df = pick_best_blat(both_uk_webblat_df)
     bv_best_webblast_df = pick_best_blat(bv_webblat_df)
 
-    # after filtering out bad blat hits
+    # w/o filtering out bad blat hits
     uk_no_filt_best_webblast_df = pick_best_blat(both_uk_webblat_df, blat_filter=False)
     bv_no_filt_best_webblast_df = pick_best_blat(bv_webblat_df, blat_filter=False)
-
 
 
     # -----------
@@ -297,8 +298,7 @@ if __name__ == '__main__':
     uk_gwas_blat_df = merge_blat_and_gwas(uk_best_webblast_df, uk_gwas_df)
     bv_gwas_blat_df = merge_blat_and_gwas(bv_best_webblast_df, bv_gwas_df)
 
-    
-    
+
     # unfiltred ukbb
     uk_gwas_unfilt_blat_df = merge_blat_and_gwas(uk_no_filt_best_webblast_df, uk_gwas_df)
     uk_gwas_unfilt_blat_df.loc[uk_gwas_unfilt_blat_df['stat_sig']==True]
@@ -320,6 +320,7 @@ if __name__ == '__main__':
 
     uk_sig_gwas_blat_clean_df = format_to_write_gwas_sig_vars(uk_gwas_blat_df)
     bv_sig_gwas_blat_clean_df = format_to_write_gwas_sig_vars(bv_gwas_blat_df)
+
 
 
 
@@ -360,9 +361,44 @@ if __name__ == '__main__':
 
 
 
-     # -----------
+    # -----------
     # plots
     # -----------
+
+    # -----------
+    # compare sequence size with sequence identity
+    # -----------
+
+    # a) best 'high-quality' blat hit per probe
+    uk_gwas_best_blat_xy_only_df
+
+
+    # b) all 'high-quality' blat hit per probe
+
+    # %%
+    uk_gwas_best_blat_xy_only_df = uk_gwas_blat_df.loc[~uk_gwas_blat_df.targetChr.isnull()].head(1000)
+
+    sns.set(context='talk', style='ticks', rc={'figure.figsize':(6,6)})
+    fig, ax = plt.subplots()
+    sns.kdeplot(uk_gwas_best_blat_xy_only_df['q.length'], uk_gwas_best_blat_xy_only_df['per_identity'], ax=ax, shade=True)
+    # sns.scatterplot(data=uk_gwas_best_blat_xy_only_df, x='q.length', y='per_identity', alpha=0.7, s=10)
+
+    temp_sig_stat= uk_gwas_best_blat_xy_only_df.loc[uk_gwas_best_blat_xy_only_df['stat_sig']==True].copy()
+    sns.scatterplot(data=temp_sig_stat, x='q.length', y='per_identity', alpha=0.7, s=100, marker="+", color='red')
+
+
+
+    plt.show()
+
+    # %%
+    sns.set(context='talk', style='ticks', rc={'figure.figsize':(6,6)})
+    fig, ax = plt.subplots()
+    sns.kdeplot(uk_gwas_best_blat_xy_only_df['score'], uk_gwas_best_blat_xy_only_df['per_identity'], ax=ax, shade=True)
+
+    sns.scatterplot(data=temp_sig_stat, x='score', y='per_identity', alpha=0.7, s=100, marker="+", color='red')
+
+
+    # %%
 
     # %%
 

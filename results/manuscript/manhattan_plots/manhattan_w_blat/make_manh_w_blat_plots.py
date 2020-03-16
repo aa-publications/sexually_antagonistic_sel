@@ -36,6 +36,7 @@ biovu_path= os.path.join(root, "results/2019_07_21_logistic/2019_07_21_logistic.
 
 # OUTPUT
 output_dir="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/manuscript/manhattan_plots"
+
 # %% markdown
 # # load and filter
 # %% markdown
@@ -44,10 +45,11 @@ output_dir="/dors/capra_lab/users/abraha1/prelim_studies/katja_biobank/results/m
 # LOAD
 raw_uk_df = pd.read_csv( ukbb_path, sep=",")
 raw_bv_df = pd.read_csv( biovu_path, sep="\s+")
+
 # %%
 # format results
 uk_gwas_df = raw_uk_df.loc[raw_uk_df.missing_p > MISS_P_THRESHOLD].copy()
-print("Removed {:,} out of {:,} snps with singificant missingness b/w cases and controls.".format(raw_uk_df.shape[0] - uk_df.shape[0], raw_uk_df.shape[0]))
+print("Removed {:,} out of {:,} snps with singificant missingness b/w cases and controls.".format(raw_uk_df.shape[0] - uk_gwas_df.shape[0], raw_uk_df.shape[0]))
 uk_gwas_df['chr_pos'] = uk_gwas_df.CHR.map(str) + ":" + uk_gwas_df.BP.map(str)
 
 
