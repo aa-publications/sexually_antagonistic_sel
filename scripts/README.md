@@ -1,7 +1,10 @@
-Abin Abraham
-2020-02-25 12:20:00
+**README**
 
-This is the repo contains all scripts used to analyze sexually antagonistic selection in the UK Biobank and BioVU.
+_Abin Abraham_
+_updated: Mar 16 2020_
+
+This repo contains scripts for analysis and figure generation for the sexually antagonistic selection project in the UK Biobank and BioVU.
+
 
 
 TABLE OF CONTENTS
