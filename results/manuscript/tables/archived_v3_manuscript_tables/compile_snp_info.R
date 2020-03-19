@@ -76,7 +76,7 @@ abline(h=0)
 
 snps <- data.frame(SNP=unique(all_snps$SNP), stringsAsFactors=FALSE)
 both <- subset(all_snps, SEX=="ALL")
-for (xn in c("hom_pval", "DATASET", "CHR", "SIGNIF")) {
+for (xn in c("hom_pval", "DATASET", "CHR", "SIGNIF", "ASSOC_Pvalue")) {
     snps[[xn]] <- both[[xn]][match(snps$SNP, both$SNP)]
 }
 fem <- subset(all_snps, SEX=="FEMALE")
@@ -152,7 +152,8 @@ with(snps,
                          FEM_EXP_HOM1=fem_exp_hom1,
                          MALE_EXP_HOM1=maleexp_hom1,
                          MISSING_PVAL=missing_pval,
-                         HOM1_PVAL=hom_pval
+                         HOM1_PVAL=hom_pval,
+                         ASSOC_PVAL=ASSOC_Pvalue
                          # , MATCHES_X=matches_X, MATCHES_Y=matches_Y
                          ),
      file="snp_summaries.csv", row.names=FALSE))
