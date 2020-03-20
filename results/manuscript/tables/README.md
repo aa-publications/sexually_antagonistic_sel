@@ -5,7 +5,7 @@ updated: 2020-03-20 09:59:02
 
 
 
-### Contains tables pertinent to the entire sexually antagonist selection in humans manuscript.** 
+### Contains tables pertinent to the entire sexually antagonist selection in humans manuscript.
 
 
 
