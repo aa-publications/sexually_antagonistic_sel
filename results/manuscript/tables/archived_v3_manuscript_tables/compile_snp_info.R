@@ -1,3 +1,8 @@
+#####
+# Read in the information from various files
+
+# all_snps will have three rows per SNP: one row for "all", one for males, one for females
+
 nonsig_snps <- read.csv("ukbb_sig_snps_missing_bysex.csv", stringsAsFactors=FALSE)
 nonsig_snps$SIGNIF <- FALSE
 nonsig_snps$DATASET <- "ukb"
@@ -14,11 +19,13 @@ names(all_snps)[names(all_snps) == "TEST"] <- "SEX"
 all_snps$hom1 <- as.numeric(sapply(strsplit(all_snps$GENO, "/"), "[[", 1))
 all_snps$het <- as.numeric(sapply(strsplit(all_snps$GENO, "/"), "[[", 2))
 all_snps$hom2 <- as.numeric(sapply(strsplit(all_snps$GENO, "/"), "[[", 3))
+# "total" is the total number of genotyped individuals
 all_snps$total <- (all_snps$hom1 + all_snps$het + all_snps$hom2)
 all_snps$freq <- (0.5 * all_snps$het + all_snps$hom1)/all_snps$total
 all_snps$exp_hom1 <- all_snps$freq^2 * all_snps$total
 
-# get number missing 
+############
+# get number missing by sex, by subtracting the number of genotypes from the total number in the dataset
 sample_counts <- data.frame(DATASET=rep(c("ukb", "biovu"), each=3),
                             SEX=c("FEMALE", "MALE", "ALL"),
                             total_genotyped=c(264813, 223478, 264813+223478, 34269, 27491, 34269+27491))
@@ -29,21 +36,27 @@ for (j in 1:nrow(all_snps)) {
 }
 
 
-# p-value for excess alternate homozygosity:
+#######################
+# Compute a p-value for defecit of alternate homozygosity
+# using a binomial test compared to overall allele frequency squared
+# (we will use the one computed on just males
 all_snps$hom_pval <- NA
 for (j in 1:nrow(all_snps)) {
     all_snps$hom_pval[j] <- with(all_snps[j,], 
         pbinom(hom1, size=total, prob=freq^2))
 }
 
-
-# p-value for HWE:
-# this p-value differs from HWE_PValue - why?
+######
+# Sanity check: compute also a p-value for HWE:
+# this p-value differs from HWE_PValue - different methodology
 all_snps$chisq_pval <- NA
 for (j in 1:nrow(all_snps)) {
     all_snps$chisq_pval[j] <- with(all_snps[j,], 
         chisq.test(c(hom1, het, hom2), p=c(freq^2, 2*freq*(1-freq), (1-freq)^2)))$p.value
 }
+
+####################
+## Diagnostic plots
 
 plot(HWE_PValue ~ chisq_pval, data=all_snps)
 abline(0,1)
@@ -72,7 +85,10 @@ points(hom1 - exp_hom1 ~ exp_hom1, data=subset(all_snps, SEX != "ALL" & SIGNIF),
        pch="*", cex=3)
 abline(h=0)
 
-### make SNP summary
+
+##########################
+# Make a single summary table for the SNPs,
+# with *one* row per SNP
 
 snps <- data.frame(SNP=unique(all_snps$SNP), stringsAsFactors=FALSE)
 both <- subset(all_snps, SEX=="ALL")
@@ -86,6 +102,10 @@ for (xn in c("hom1", "het", "hom2", "total", "freq", "exp_hom1", "num_missing"))
     snps[[paste0("male", xn)]] <- male[[xn]][match(snps$SNP, male$SNP)]
 }
 
+########
+# Compute a p-value for differential missingness between the sexes,
+# using Fisher's exact test
+
 snps$missing_pval <- NA
 for (j in 1:nrow(snps)) {
     snps$missing_pval[j] <- with(snps[j,],
@@ -93,13 +113,53 @@ for (j in 1:nrow(snps)) {
                                               c(fem_num_missing, malenum_missing)))$p.value)
 }
 
+############
+# Diagnostics and summaries
+
 plot(missing_pval ~ hom_pval, data=snps)
 
-# how many are below 1e-4 for each test?
+# all are below 1e-4 for each test?
 addmargins(with(snps, table(missing=missing_pval < 1e-4, homozygotes=hom_pval < 1e-4)))
+# and all are below 1e-6 for at least one test except rs1490078
+addmargins(with(snps, table(missing=missing_pval < 1e-6, homozygotes=hom_pval < 1e-6)))
 
-##
-# load homology
+# how many SNPs have almost no male homozygotes
+addmargins(with(snps, table(malehom1 < 10, fem_hom1 < 10)))
+# and, of the 64:
+addmargins(with(subset(snps, !SIGNIF), table(male=malehom1 < 22, female=fem_hom1 < 22)))
+
+
+#######################
+# Include BLAT results:
+# pull out target chromosome, and score and length of hit
+
+add_vars <- c("targetChr", "score", "per_identity", "q.length")
+for (vn in add_vars) { snps[[vn]] <- NA }
+
+biovu_best_blats <- read.table("best_blatscore_xy_hit_length_filtered_bv_gwas.tsv.gz", header=TRUE, sep='\t', stringsAsFactors=FALSE)
+biovu_best_blats$study <- "biovu"
+ukb_best_blats <- read.table("uk_var_w_missingness_best_blatscore_xy.tsv", header=TRUE, sep='\t', stringsAsFactors=FALSE)
+ukb_best_blats$study <- "ukb"
+stopifnot(all(names(biovu_best_blats) == names(ukb_best_blats)))
+best_blats <- rbind(biovu_best_blats, ukb_best_blats)
+rm(biovu_best_blats, ukb_best_blats)
+
+yesthese <- subset(best_blats, SNP %in% snps$SNP)
+
+for (k in 1:nrow(snps)) {
+    # bk <- match(snps$SNP[k], best_blats$SNP)
+    bk <- match(snps$SNP[k], yesthese$SNP)
+    stopifnot(length(bk) == 1)
+    if (!is.na(bk)) {
+        for (vn in add_vars) {
+            # snps[[vn]][k] <- best_blats[[vn]][bk]
+            snps[[vn]][k] <- yesthese[[vn]][bk]
+        }
+    } else {
+        cat(sprintf("SNP %s has no match.\n", snps$SNP[k]))
+    }
+}
+
 
 ukb_blat <- read.table("biovu_ukbb_blat_for_sighits_ukb.csv", header=TRUE, sep='\t')
 biovu_blat <- read.table("biovu_ukbb_blat_for_sighits_biovu.csv", header=TRUE, sep='\t')
