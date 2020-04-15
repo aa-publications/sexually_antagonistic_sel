@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\pagestyle{empty}
+\linespread{1.15}
+
+\title{Biobank Supplement}
+\date{April 2020}
+
+\begin{document}
+
+\noindent
+\textbf{Supplemental File XX.}
+
+\noindent
+In the we focus on in this paper -- sex-dependent viability selection on an autosomal variant --
+any differences in allele frequencies among the adult females and adult males
+must happen due to differential, genotype-dependent mortality during that generation,
+as discussed in Kasimatis [cite].
+How much ``excess'' mortality -- genotype-dependent mortality --
+must happen to cause a frequency difference of $f$?
+Calculations of the ``cost of selection'' [cite Haldane] are standard,
+but we provide the argument here for clarity,
+and to disambiguate the rate of ``excess mortality'' from the selection coefficient,
+a related but distinct concept.
+
+Suppose that before mortality selection, the focal allele is at frequency $p$ in both sexes.
+Then suppose that selection changes the frequency in some population (e.g., the ``population'' of males)
+to $p - f$.
+How many ``selective deaths'' was this?
+If we are to remove a proportion $u$ of the focal alleles (leaving all of the other allele),
+then the frequency of the focal allele after selection is
+\begin{align*}
+    \frac{p (1-u)}{p (1-u) + (1 - p)} = \frac{p (1-u)}{1 - u p},
+\end{align*}
+and so if the frequency after selection is $p-f$ we need that
+\begin{align*}
+    \frac{p (1-u)}{(1 - u p)} = p - f  .
+\end{align*}
+Rearranging this equation,
+we obtain that
+% \begin{align*}
+%    p - p u = p - u p^2 - (1 - u p) f , \\
+%    f = u (pf + p - p^2) = u p (f + 1 - p) ,
+% \end{align*}
+% and so
+\begin{align*}
+    u = \frac{f}{p (f + 1 - p)} .
+\end{align*}
+
+% For $f$ small, the denominator is nearly $p (1 - p)$, which is at most $1/4$,
+% and so $u$ is at least $4f$.
+% In other words, the proportion \emph{of a particular allele} that must die to move the frequency by $f$ is at \emph{least} $4 f$.
+
+Here, $u$ is the proportion of individuals \emph{with the focal allele} that suffered selective mortality, but we want to know the proportion of the total population.
+Since in a population of size $N$, the number of selective deaths is $u p N$,
+the proportion of the total population that is removed by selection is $u p$,
+which in terms of $p$ and $f$ is
+\begin{align*}
+    u p = \frac{f}{f + 1 - p} .
+\end{align*}
+At $p = 1/2$ and with $f$ small, $u$ is close to $2 f$,
+while at small $p$, $u$ is close to $f$,
+and increases with increasing $p$.
+Thus, the proportion \emph{of the population} that must die to move the frequency by $f$
+is between $f$ and $2 f$.
+To make a frequency difference of $f$ between the sexes,
+the frequency in each sex could change by $f/2$ in opposite directions,
+and so at least $f/2$ of each of the sexes (and thus, the total population)
+would have to be removed by selection.
+
+\end{document}

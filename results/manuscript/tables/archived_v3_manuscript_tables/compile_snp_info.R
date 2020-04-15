@@ -132,6 +132,10 @@ addmargins(with(subset(snps, !SIGNIF), table(male=malehom1 < 22, female=fem_hom1
 #######################
 # Include BLAT results:
 # pull out target chromosome, and score and length of hit
+#
+
+if (FALSE) {
+    ## THIS DOES NOT WORK DUE TO MOVING FILES AROUND
 
 add_vars <- c("targetChr", "score", "per_identity", "q.length")
 for (vn in add_vars) { snps[[vn]] <- NA }
@@ -160,6 +164,12 @@ for (k in 1:nrow(snps)) {
     }
 }
 
+##### end
+}
+
+
+if (FALSE) {
+    # OLD VERsiON
 
 ukb_blat <- read.table("biovu_ukbb_blat_for_sighits_ukb.csv", header=TRUE, sep='\t')
 biovu_blat <- read.table("biovu_ukbb_blat_for_sighits_biovu.csv", header=TRUE, sep='\t')
@@ -193,6 +203,9 @@ snps$matches_X[match(names(matches_X), snps$SNP)] <- matches_X
 snps$matches_X[match(names(biovu_matches_X), snps$SNP)] <- (snps$matches_X[match(names(biovu_matches_X), snps$SNP)] | biovu_matches_X)
 snps$matches_Y[match(names(matches_Y), snps$SNP)] <- matches_Y
 snps$matches_Y[match(names(biovu_matches_Y), snps$SNP)] <- (snps$matches_Y[match(names(biovu_matches_Y), snps$SNP)] | biovu_matches_Y)
+
+########### end
+}
 
 
 # Write this out
