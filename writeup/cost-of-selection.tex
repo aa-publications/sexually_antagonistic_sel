@@ -5,22 +5,25 @@
 \pagestyle{empty}
 \linespread{1.15}
 
+\usepackage{natbib}
+
 \title{Biobank Supplement}
+\author{kkasimat}
 \date{April 2020}
 
 \begin{document}
 
 \noindent
-\textbf{Supplemental File XX.}
+\textbf{Supplemental File 9. Estimating the sex-specific mortality cost}
 
 \noindent
-In the we focus on in this paper -- sex-dependent viability selection on an autosomal variant --
+In the model we focus on in this paper -- sex-dependent viability selection on an autosomal variant --
 any differences in allele frequencies among the adult females and adult males
 must happen due to differential, genotype-dependent mortality during that generation,
-as discussed in Kasimatis [cite].
+as discussed in \citet{Kasimatis:2019cs}.
 How much ``excess'' mortality -- genotype-dependent mortality --
 must happen to cause a frequency difference of $f$?
-Calculations of the ``cost of selection'' [cite Haldane] are standard,
+Calculations of the ``cost of selection'' \citep{Haldane:1957ka} are standard,
 but we provide the argument here for clarity,
 and to disambiguate the rate of ``excess mortality'' from the selection coefficient,
 a related but distinct concept.
@@ -69,5 +72,11 @@ To make a frequency difference of $f$ between the sexes,
 the frequency in each sex could change by $f/2$ in opposite directions,
 and so at least $f/2$ of each of the sexes (and thus, the total population)
 would have to be removed by selection.
+
+%This is where your bibliography is generated. Make sure that your .bib file is actually called library.bib
+\bibliography{ref}
+
+%This defines the bibliographies style. Search online for a list of available styles.
+\bibliographystyle{abbrvnat}
 
 \end{document}
